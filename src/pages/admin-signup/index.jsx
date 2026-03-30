@@ -11,6 +11,7 @@ const AdminSignUp = () => {
     lastName: "",
     email: "",
     password: "",
+    confirmPassword: "",
     phoneNo: "",
   };
   const validationSchema = Yup.object({
@@ -30,6 +31,9 @@ const AdminSignUp = () => {
     password: Yup.string()
       .min(5, "Password must be at least 5 characters")
       .required("Password is required"),
+    confirmPassword: Yup.string()
+      .required("Confirm Password is required")
+      .oneOf([Yup.ref("password"), null], "Passwords must match"),
     phoneNo: Yup.string()
       .required("Phone Number is required")
       .matches(/^\d{10}$/, "Phone Number must be exactly 10 digits"),
@@ -50,7 +54,7 @@ const AdminSignUp = () => {
         resetForm();
       } else {
         toast.error(
-          res?.data?.error?.[0] || re?.data?.error || "Something went wrong",
+          res?.data?.error?.[0] || res?.data?.error || "Something went wrong",
         );
       }
     } catch (error) {
@@ -161,6 +165,26 @@ const AdminSignUp = () => {
                               />
                               <ErrorMessage
                                 name="password"
+                                component="div"
+                                className="text-danger"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="col-md-12 col-lg-6 col-xl-6">
+                            <div className="form-group">
+                              <label htmlFor="confirmPassword">
+                                Confirm Password<em>*</em>
+                              </label>
+                              <Field
+                                type="password"
+                                name="confirmPassword"
+                                id="confirmPassword"
+                                className="form-control"
+                                placeholder="Enter Confirm Password"
+                              />
+                              <ErrorMessage
+                                name="confirmPassword"
                                 component="div"
                                 className="text-danger"
                               />
