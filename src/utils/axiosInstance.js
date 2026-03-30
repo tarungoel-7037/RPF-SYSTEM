@@ -8,6 +8,13 @@ const axiosInstance = axios.create({
   baseURL: BASE_URL,
 });
 
+const clearAuthAndRedirect = () => {
+  localStorage.removeItem(TOKEN);
+  localStorage.removeItem(USER);
+  localStorage.removeItem(ROLE);
+  window.location.href = ROUTES.LOGIN;
+};
+
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(TOKEN);
@@ -27,15 +34,15 @@ axiosInstance.interceptors.response.use(
       response?.data?.response === "error" &&
       response?.data?.errors === "Authorization failled"
     ) {
-      localStorage.removeItem(TOKEN);
-      localStorage.removeItem(USER);
-      localStorage.removeItem(ROLE);
-      window.location.href = ROUTES.LOGIN;
+      clearAuthAndRedirect();
       return;
     }
     return response;
   },
   (error) => {
+    if (error?.response?.status === 401) {
+      clearAuthAndRedirect();
+    }
     return Promise.reject(error);
   },
 );

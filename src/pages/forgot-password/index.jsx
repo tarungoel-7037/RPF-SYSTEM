@@ -82,6 +82,16 @@ const ForgotPassword = () => {
                           </button>
                         </div>
                         <div className="mt-4 text-center">
+                          <Link
+                            to={ROUTES.RESET_PASSWORD}
+                            className="text-muted"
+                          >
+                            <i className="mdi mdi-lock-reset mr-1"></i> Reset
+                            Password
+                          </Link>
+                        </div>
+
+                        <div className="mt-4 text-center">
                           <Link to={ROUTES.LOGIN} className="text-muted">
                             <i className="mdi mdi-lock mr-1"></i> Login
                           </Link>

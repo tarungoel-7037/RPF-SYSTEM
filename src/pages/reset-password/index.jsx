@@ -13,16 +13,20 @@ const ResetPassword = () => {
     password: Yup.string()
       .min(5, "Password must be at least 5 characters")
       .required("Password is required"),
+    confirmPassword: Yup.string()
+      .required("Confirm Password is required")
+      .oneOf([Yup.ref("password"), null], "Passwords must match"),
     otp: Yup.string().required("OTP is required"),
   });
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      const formData = new FormData();
-      formData.append("email", values.email);
-      formData.append("new_password", values.password);
-      formData.append("otp", values.otp);
-      const res = await resetPassword(formData);
+      const payload = {
+        email: values.email,
+        new_password: values.password,
+        otp: values.otp,
+      };
+      const res = await resetPassword(payload);
       if (res?.data?.response === "success") {
         toast.success("Password changed successfully");
         resetForm();
@@ -31,7 +35,11 @@ const ResetPassword = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error(
+        error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          "Something went wrong",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -59,6 +67,7 @@ const ResetPassword = () => {
                   <Formik
                     initialValues={{
                       password: "",
+                      confirmPassword: "",
                       otp: "",
                       email: "",
                     }}
@@ -99,13 +108,31 @@ const ResetPassword = () => {
                         </div>
 
                         <div className="form-group">
-                          <label htmlFor="otp">OTP</label>
+                          <label htmlFor="confirmPassword">
+                            Confirm Password
+                          </label>
                           <Field
                             type="password"
+                            name="confirmPassword"
+                            id="confirmPassword"
+                            className="form-control"
+                            placeholder="Confirm new password"
+                          />
+                          <ErrorMessage
+                            name="confirmPassword"
+                            component="div"
+                            className="text-danger"
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label htmlFor="otp">OTP</label>
+                          <Field
+                            type="text"
                             name="otp"
                             id="otp"
                             className="form-control"
-                            placeholder="Confirm password"
+                            placeholder="Enter OTP"
                           />
                           <ErrorMessage
                             name="otp"
