@@ -14,20 +14,26 @@ const AddCategory = () => {
     category: "",
   };
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (values, { resetForm, setSubmitting }) => {
     try {
       const formData = new FormData();
       formData.append("name", values.category);
       const res = await addCategory(formData);
       if (res?.data?.response === "success") {
         toast.success("Category added successfully");
+        resetForm();
       } else {
-        toast.error(res?.data?.error);
+        toast.error(res?.data?.error || "Something went wrong");
       }
     } catch (error) {
       console.error(error);
+      toast.error(
+        error?.response?.data?.error ||
+          error?.response?.data?.message ||
+          "Something went wrong",
+      );
     } finally {
-      resetForm();
+      setSubmitting(false);
     }
   };
   return (

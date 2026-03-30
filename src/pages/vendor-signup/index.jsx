@@ -249,7 +249,7 @@ const VendorSignUp = () => {
                           <div className="col-md-12 col-lg-6 col-xl-6">
                             <div className="form-group">
                               <label htmlFor="revenue">
-                                Revenue (Last 3 Years in Lacks)<em>*</em>
+                                Revenue (Last 3 Years in Lakhs)<em>*</em>
                               </label>
                               <Field
                                 type="text"

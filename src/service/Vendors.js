@@ -6,8 +6,11 @@ export const getVendors = () => {
 };
 
 export const approveVendor = (payload) => {
-
   return axiosInstance.post(API.APPROVE_VENDOR, payload);
+};
+
+export const disapproveVendor = (userId) => {
+  return axiosInstance.post(`/vendors/${userId}/disapprove/`);
 };
 
 export const getVendorsByCategory = (id) => {

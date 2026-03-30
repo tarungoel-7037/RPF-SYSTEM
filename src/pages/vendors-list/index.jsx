@@ -3,7 +3,11 @@ import Table from "../../components/table/index.jsx";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { ROUTES } from "../../constants/RoutesConst.js";
-import { getVendors, approveVendor } from "../../service/Vendors.js";
+import {
+  getVendors,
+  approveVendor,
+  disapproveVendor,
+} from "../../service/Vendors.js";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import "./vendor.css";
@@ -42,24 +46,38 @@ const VendorsList = () => {
 
   const handleStatus = async (row) => {
     try {
-      const formData = new FormData();
-      formData.append("user_id", row?.user_id);
-      formData.append("status", "approved");
-      const res = await approveVendor(formData);
+      const isApproved = row?.status === "Approved";
+      let res;
+
+      if (isApproved) {
+        res = await disapproveVendor(row?.user_id);
+      } else {
+        const formData = new FormData();
+        formData.append("user_id", row?.user_id);
+        formData.append("status", "approved");
+        res = await approveVendor(formData);
+      }
+
       if (res?.data?.response === "success") {
-        toast.success("Vendor Approved");
+        toast.success(
+          isApproved ? "Vendor Disapproved" : "Vendor Approved",
+        );
         setVendors((prev) =>
           prev.map((vendor) =>
             vendor.user_id === row.user_id
-              ? { ...vendor, status: "Approved" }
+              ? {
+                  ...vendor,
+                  status: isApproved ? "Disapproved" : "Approved",
+                }
               : vendor,
           ),
         );
       } else {
-        toast.error(res?.data?.message);
+        toast.error(res?.data?.message || "Something went wrong");
       }
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong");
     }
   };
 
@@ -108,7 +126,7 @@ const VendorsList = () => {
           } button-unset `}
           onClick={() => handleStatus(row)}
         >
-          {row.status === "Approved" ? "" : "Approve"}
+          {row.status === "Approved" ? "Disapprove" : "Approve"}
         </button>
       ),
     },
